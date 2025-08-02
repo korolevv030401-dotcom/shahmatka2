@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Визуальная шахматка</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .chessboard {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      grid-gap: 8px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .apartment {
+      width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .apartment:hover {
+      transform: scale(1.1);
+    }
+
+    .free {
+      background-color: #4CAF50; /* зеленый */
+    }
+
+    .reserved {
+      background-color: #FFC107; /* желтый */
+    }
+
+    .sold {
+      background-color: #F44336; /* красный */
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Визуальная шахматка квартир</h2>
+
+  <div class="chessboard" id="chessboard">
+    Загрузка...
+  </div>
+
+  <script>
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbywYzAiIDV2TxIATCxhWcntL7O-sI6hvfodYY9ZIyVY8DznGeKaX-zN_x-fPpgaytuT/exec';
+
+    function renderChessboard(apartments) {
+      const board = document.getElementById('chessboard');
+      board.innerHTML = '';
+
+      apartments.forEach(apartment => {
+        const div = document.createElement('div');
+        div.className = `apartment ${apartment.status}`;
+        div.textContent = apartment.id;
+        div.title = `Квартира №${apartment.id}\nСтатус: ${apartment.status}`;
+        div.onclick = () => alert(`Квартира №${apartment.id}\nСтатус: ${apartment.status}`);
+        board.appendChild(div);
+      });
+    }
+
+    async function loadApartments() {
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        renderChessboard(data);
+      } catch (error) {
+        document.getElementById('chessboard').innerText = 'Ошибка загрузки данных';
+        console.error('Ошибка:', error);
+      }
+    }
+
+    loadApartments();
+  </script>
+</body>
+</html>
